@@ -1,4 +1,5 @@
 import math
+import random
 
 class Func:
 
@@ -171,7 +172,7 @@ class Calc:
 
 			elif top == 7:
 				op1 = self.num.pop()
-				self.num.append(self.__fact(op1))
+				self.num.append(math.factorial(int(op1)))
 			
 			elif top == 8:
 				op1 = self.num.pop()
@@ -373,12 +374,113 @@ class Calc:
 			"""Absolute value function"""
 			self.num.append(math.abs(self.num.pop()))
 		
-	def __fact(self, n):
+		elif f.name == "ln":
+			"""Natural log function"""
+			self.num.append(math.log(self.num.pop()))
 
-		if n == 1:
-			return 1
+		elif f.name == "log":
+			"""Log base 10 by default. If args = 2, base is the second arg"""
+
+			if f.args == 1: #base 10
+				self.num.append(math.log10(self.num.pop()))
+			
+			elif f.args == 2: #base n
+				base = int(self.num.pop())
+				self.num.append(math.log(self.num.pop(), base))
+			
+			else:
+				raise SyntaxError(f"Invalid number of args ({f.args}) for log")
 		
-		elif n < 1:
-			raise ArithmeticError()
+		elif f.name == "round":
+			"""Round to the nearest whole number"""
+			self.num.append(round(self.num.pop()))
 
-		return self.__fact(n-1) * n
+		elif f.name == "ceil":
+			"""Ceiling function"""
+			self.num.append(math.ceil(self.num.pop()))
+
+		elif f.name == "floor":
+			"""Floor function"""
+			self.num.append(math.floor(self.num.pop()))
+		
+		elif f.name == "nPr":
+			"""Permutation function"""
+			num1 = self.num.pop()
+			num2 = self.num.pop()
+			self.num.append(math.factorial(int(num2)) / math.factorial(int(num2 - num1)))
+
+		elif f.name == "nCr":
+			"""Combination function"""
+			num1 = self.num.pop()
+			num2 = self.num.pop()
+			self.num.append( math.factorial(int(num2)) / (math.factorial(int(num2 - num1)) * math.factorial(int(num1))) )
+		
+		elif f.name == "gcd":
+			"""Greatest Common Denominator"""
+			num1 = self.num.pop()
+			num2 = self.num.pop()
+			self.num.append(math.gcd(int(num1), int(num2)))
+
+		elif f.name == "lcm":
+			"""Least Common Multiple"""
+			num1 = self.num.pop()
+			num2 = self.num.pop()
+			self.num.append( (num1 * num2) / math.gcd(int(num1), int(num2)))
+		
+		elif f.name == "rand":
+			"""Generate a random argument.
+			0 args = [0,1) range
+			2 args = [arg 1, arg2) range
+			"""
+
+			if f.args == 0:
+				self.num.append(random.random())
+			
+			elif f.args == 2:
+				num2 = int(self.num.pop())
+				num1 = int(self.num.pop())
+				self.num.append(random.randrange(num1, num2))
+
+			else:
+				raise SyntaxError(f"Invalid number of args ({f.args}) for rand")
+		
+		elif f.name == "prime":
+			"""Check if input number is prime.
+			1 if prime, 0 if not prime.
+			"""
+			
+			def is_prime(n):
+
+				if n <= 1:
+					return 0
+				if n <= 3:
+					return 1
+
+				if n % 2 == 0 or n % 3 == 0:
+					return 0
+				
+				#precomp
+				sn = math.sqrt(n) + 1
+
+				for i in range(6, sn, 6):
+					if n % (i-1) == 0 or n % (i+1) == 0:
+						return 0
+				
+				return 1
+
+			self.num.append(is_prime(int(self.num.pop())))
+
+		elif f.name == "sign":
+			"""Return the sign of the input.
+			-1 if input is negative
+			0 if input is 0
+			1 if input is positive
+			"""
+
+			num1 = self.num.pop()
+
+			self.num.append( -1 if num1 < 0 else 1 if num1 > 0 else 0 )
+		
+		elif f.name == "sqrt":
+			"""Square root function"""
+			self.num.append(math.sqrt(self.num.pop()))
